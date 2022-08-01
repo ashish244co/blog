@@ -125,3 +125,6 @@ feed:
   
 exclude:
   - settings.ini
+  
+show_tags: true
+

@@ -8,7 +8,9 @@ permalink: /about/
 
 ![]({{ site.baseurl }}/images/myself.jpg "my pic")
 
-## Skills
+## My competencies include: 
+
+### Skillset:
 
 Statistics and Machine Learning
 - Data Analysis
@@ -33,7 +35,7 @@ Computer Vision
 - Object detection
 
 
-## Tools
+### Tools
 
 Analytical Tools
 - Python
@@ -42,7 +44,7 @@ Analytical Tools
 - Google Analytics
 - Microsoft Excel
 - PowerBI
-- 
+
 Frameworks
 - Pytorch/Tensorflow
 - Statsmodel

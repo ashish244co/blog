@@ -37,9 +37,11 @@ url: "https://ashish244co.github.io" # the base hostname & protocol for your sit
 baseurl: "/blog" # the subpath of your site, e.g. "/blog".
 
 # Github and twitter are optional:
+email: ashishkashav1@gmail.com
+
 minima:
   social_links:
-    email: ashishkashav1@gmail.com
+    
 
 # Set this to true to get LaTeX math equation support
 use_math: 

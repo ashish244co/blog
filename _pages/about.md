@@ -4,13 +4,13 @@ title: About Me
 permalink: /about/
 ---
 
-## A data professional who is well-versed in Data Science, Data Engineering, Machine/Deep Learning, Data Analysis and Data Visualisation.
+## A data professional who is well-versed in Data Science, Data Engineering, Machine/Deep Learning, and Data Analysis.
 
 ![]({{ site.baseurl }}/images/myself.jpg "my pic")
 
 ## My competencies include: 
 
-### Skillset:
+### Conceptual Skills
 
 Statistics and Machine Learning
 - Data Analysis
@@ -52,7 +52,7 @@ Frameworks
 - Numpy/Scipy
 - Pandas
 - Plotly
--
+
 ETL/Database Tools
 - Delta Lake
 - Azure Data Factory

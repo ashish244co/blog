@@ -4,7 +4,8 @@ title: About Me
 permalink: /about/
 ---
 
-This website is powered by **[fastpages](https://github.com/fastai/fastpages)** [^1].
+My name is Ashish Kashav.
+Find more details here: **[LinkedIn](https://www.linkedin.com/in/ashish-kashav/)** [^1].
 
 
 

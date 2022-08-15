@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Question answering based on corpus | Ashish Kashav</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Question answering based on corpus" />
+<meta name="author" content="Ashish Kashav" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="We create a corpus of summaries from wikipedia for certain topics. Then we do question answering on the corpus." />
+<meta property="og:description" content="We create a corpus of summaries from wikipedia for certain topics. Then we do question answering on the corpus." />
+<link rel="canonical" href="https://ashish244co.github.io/blog/deep%20learning/nlp/jupyter/2022/08/10/Question_Answer_From_Passage.html" />
+<meta property="og:url" content="https://ashish244co.github.io/blog/deep%20learning/nlp/jupyter/2022/08/10/Question_Answer_From_Passage.html" />
+<meta property="og:site_name" content="Ashish Kashav" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-08-10T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Question answering based on corpus" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Ashish Kashav"},"dateModified":"2022-08-10T00:00:00-05:00","datePublished":"2022-08-10T00:00:00-05:00","description":"We create a corpus of summaries from wikipedia for certain topics. Then we do question answering on the corpus.","headline":"Question answering based on corpus","mainEntityOfPage":{"@type":"WebPage","@id":"https://ashish244co.github.io/blog/deep%20learning/nlp/jupyter/2022/08/10/Question_Answer_From_Passage.html"},"url":"https://ashish244co.github.io/blog/deep%20learning/nlp/jupyter/2022/08/10/Question_Answer_From_Passage.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ashish244co.github.io/blog/feed.xml" title="Ashish Kashav" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Ashish Kashav</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Question answering based on corpus</h1><p class="page-description">We create a corpus of summaries from wikipedia for certain topics. Then we do question answering on the corpus.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-08-10T00:00:00-05:00" itemprop="datePublished">
+        Aug 10, 2022
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Ashish Kashav</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#deep learning">deep learning</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#NLP">NLP</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#jupyter">jupyter</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/ashish244co/blog/tree/master/_notebooks/2022-08-10-Question_Answer_From_Passage.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/blog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/ashish244co/blog/master?filepath=_notebooks%2F2022-08-10-Question_Answer_From_Passage.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/blog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/ashish244co/blog/blob/master/_notebooks/2022-08-10-Question_Answer_From_Passage.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/blog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fashish244co%2Fblog%2Fblob%2Fmaster%2F_notebooks%2F2022-08-10-Question_Answer_From_Passage.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/blog/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#installations-and-imports">installations and imports </a></li>
+<li class="toc-entry toc-h1"><a href="#Embedding-conversion">Embedding conversion </a></li>
+<li class="toc-entry toc-h1"><a href="#Searching">Searching </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-08-10-Question_Answer_From_Passage.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can input a query or a question. The script then uses semantic search
+to find relevant passages.</p>
+<p>For semantic search, we use <code>SentenceTransformer('multi-qa-MiniLM-L6-cos-v1')</code> and retrieve potentially passages that answer the input query.</p>
+<p>Next, we use a more powerful CrossEncoder (<code>cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')</code>) that
+scores the query and all retrieved passages for their relevancy. The cross-encoder further boost the performance,
+especially when you search over a corpus for which the bi-encoder was not trained for.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="installations-and-imports">
+<a class="anchor" href="#installations-and-imports" aria-hidden="true"><span class="octicon octicon-link"></span></a>installations and imports<a class="anchor-link" href="#installations-and-imports"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip install -U sentence-transformers
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/
+Collecting sentence-transformers
+  Downloading sentence-transformers-2.2.2.tar.gz (85 kB)
+     |████████████████████████████████| 85 kB 5.7 MB/s 
+Collecting rank_bm25
+  Downloading rank_bm25-0.2.2-py3-none-any.whl (8.6 kB)
+Collecting transformers&lt;5.0.0,&gt;=4.6.0
+  Downloading transformers-4.21.1-py3-none-any.whl (4.7 MB)
+     |████████████████████████████████| 4.7 MB 60.5 MB/s 
+Requirement already satisfied: tqdm in /usr/local/lib/python3.7/dist-packages (from sentence-transformers) (4.64.0)
+Requirement already satisfied: torch&gt;=1.6.0 in /usr/local/lib/python3.7/dist-packages (from sentence-transformers) (1.12.1+cu113)
+Requirement already satisfied: torchvision in /usr/local/lib/python3.7/dist-packages (from sentence-transformers) (0.13.1+cu113)
+Requirement already satisfied: numpy in /usr/local/lib/python3.7/dist-packages (from sentence-transformers) (1.21.6)
+Requirement already satisfied: scikit-learn in /usr/local/lib/python3.7/dist-packages (from sentence-transformers) (1.0.2)
+Requirement already satisfied: scipy in /usr/local/lib/python3.7/dist-packages (from sentence-transformers) (1.7.3)
+Requirement already satisfied: nltk in /usr/local/lib/python3.7/dist-packages (from sentence-transformers) (3.7)
+Collecting sentencepiece
+  Downloading sentencepiece-0.1.97-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.3 MB)
+     |████████████████████████████████| 1.3 MB 63.0 MB/s 
+Collecting huggingface-hub&gt;=0.4.0
+  Downloading huggingface_hub-0.8.1-py3-none-any.whl (101 kB)
+     |████████████████████████████████| 101 kB 15.7 MB/s 
+Requirement already satisfied: filelock in /usr/local/lib/python3.7/dist-packages (from huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (3.7.1)
+Requirement already satisfied: importlib-metadata in /usr/local/lib/python3.7/dist-packages (from huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (4.12.0)
+Requirement already satisfied: requests in /usr/local/lib/python3.7/dist-packages (from huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (2.23.0)
+Requirement already satisfied: packaging&gt;=20.9 in /usr/local/lib/python3.7/dist-packages (from huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (21.3)
+Collecting pyyaml&gt;=5.1
+  Downloading PyYAML-6.0-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (596 kB)
+     |████████████████████████████████| 596 kB 70.8 MB/s 
+Requirement already satisfied: typing-extensions&gt;=3.7.4.3 in /usr/local/lib/python3.7/dist-packages (from huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (4.1.1)
+Requirement already satisfied: pyparsing!=3.0.5,&gt;=2.0.2 in /usr/local/lib/python3.7/dist-packages (from packaging&gt;=20.9-&gt;huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (3.0.9)
+Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.7/dist-packages (from transformers&lt;5.0.0,&gt;=4.6.0-&gt;sentence-transformers) (2022.6.2)
+Collecting tokenizers!=0.11.3,&lt;0.13,&gt;=0.11.1
+  Downloading tokenizers-0.12.1-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (6.6 MB)
+     |████████████████████████████████| 6.6 MB 51.6 MB/s 
+Requirement already satisfied: zipp&gt;=0.5 in /usr/local/lib/python3.7/dist-packages (from importlib-metadata-&gt;huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (3.8.1)
+Requirement already satisfied: joblib in /usr/local/lib/python3.7/dist-packages (from nltk-&gt;sentence-transformers) (1.1.0)
+Requirement already satisfied: click in /usr/local/lib/python3.7/dist-packages (from nltk-&gt;sentence-transformers) (7.1.2)
+Requirement already satisfied: idna&lt;3,&gt;=2.5 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (2.10)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,&lt;1.26,&gt;=1.21.1 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (1.24.3)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (2022.6.15)
+Requirement already satisfied: chardet&lt;4,&gt;=3.0.2 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;huggingface-hub&gt;=0.4.0-&gt;sentence-transformers) (3.0.4)
+Requirement already satisfied: threadpoolctl&gt;=2.0.0 in /usr/local/lib/python3.7/dist-packages (from scikit-learn-&gt;sentence-transformers) (3.1.0)
+Requirement already satisfied: pillow!=8.3.*,&gt;=5.3.0 in /usr/local/lib/python3.7/dist-packages (from torchvision-&gt;sentence-transformers) (7.1.2)
+Building wheels for collected packages: sentence-transformers
+  Building wheel for sentence-transformers (setup.py) ... done
+  Created wheel for sentence-transformers: filename=sentence_transformers-2.2.2-py3-none-any.whl size=125938 sha256=7a7c08a20ab6c1b3fd19bb24926cf0de269677fcc622e3cd915b6d1ee0692a21
+  Stored in directory: /root/.cache/pip/wheels/bf/06/fb/d59c1e5bd1dac7f6cf61ec0036cc3a10ab8fecaa6b2c3d3ee9
+Successfully built sentence-transformers
+Installing collected packages: pyyaml, tokenizers, huggingface-hub, transformers, sentencepiece, sentence-transformers, rank-bm25
+  Attempting uninstall: pyyaml
+    Found existing installation: PyYAML 3.13
+    Uninstalling PyYAML-3.13:
+      Successfully uninstalled PyYAML-3.13
+Successfully installed huggingface-hub-0.8.1 pyyaml-6.0 rank-bm25-0.2.2 sentence-transformers-2.2.2 sentencepiece-0.1.97 tokenizers-0.12.1 transformers-4.21.1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We use the Bi-Encoder to encode all passages, so that we can use it with sematic search. The bi-encoder will retrieve documents. We use a cross-encoder, to re-rank the results list to improve the quality</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">sentence_transformers</span> <span class="kn">import</span> <span class="n">SentenceTransformer</span><span class="p">,</span> <span class="n">CrossEncoder</span><span class="p">,</span> <span class="n">util</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: No GPU found. Please add GPU to your notebook"</span><span class="p">)</span>
+
+
+<span class="n">bi_encoder</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s1">'multi-qa-MiniLM-L6-cos-v1'</span><span class="p">)</span>
+<span class="n">bi_encoder</span><span class="o">.</span><span class="n">max_seq_length</span> <span class="o">=</span> <span class="mi">128</span>     
+<span class="n">top_k</span> <span class="o">=</span> <span class="mi">3</span>                         
+
+<span class="n">cross_encoder</span> <span class="o">=</span> <span class="n">CrossEncoder</span><span class="p">(</span><span class="s1">'cross-encoder/ms-marco-MiniLM-L-6-v2'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We search for terms in wikipedia using wiki api and then store each sentence in a list</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip3 install wikipedia-api
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/
+Requirement already satisfied: beautifulsoup4 in /usr/local/lib/python3.7/dist-packages (4.6.3)
+Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/
+Collecting wikipedia-api
+  Downloading Wikipedia-API-0.5.4.tar.gz (18 kB)
+Requirement already satisfied: requests in /usr/local/lib/python3.7/dist-packages (from wikipedia-api) (2.23.0)
+Requirement already satisfied: chardet&lt;4,&gt;=3.0.2 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;wikipedia-api) (3.0.4)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;wikipedia-api) (2022.6.15)
+Requirement already satisfied: idna&lt;3,&gt;=2.5 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;wikipedia-api) (2.10)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,&lt;1.26,&gt;=1.21.1 in /usr/local/lib/python3.7/dist-packages (from requests-&gt;wikipedia-api) (1.24.3)
+Building wheels for collected packages: wikipedia-api
+  Building wheel for wikipedia-api (setup.py) ... done
+  Created wheel for wikipedia-api: filename=Wikipedia_API-0.5.4-py3-none-any.whl size=13477 sha256=e9ff293b1a50e1c0c1805f6ed27456515c407462f3cb6a10aea8766b22519539
+  Stored in directory: /root/.cache/pip/wheels/d3/24/56/58ba93cf78be162451144e7a9889603f437976ef1ae7013d04
+Successfully built wikipedia-api
+Installing collected packages: wikipedia-api
+Successfully installed wikipedia-api-0.5.4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">wikipediaapi</span>
+<span class="n">passages</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">wiki_wiki</span> <span class="o">=</span> <span class="n">wikipediaapi</span><span class="o">.</span><span class="n">Wikipedia</span><span class="p">(</span><span class="s1">'en'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'Krishna'</span><span class="p">,</span><span class="s1">'Shiva'</span><span class="p">,</span><span class="s1">'Vishnu'</span><span class="p">]:</span>
+
+  <span class="n">page_py</span> <span class="o">=</span> <span class="n">wiki_wiki</span><span class="o">.</span><span class="n">page</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+  <span class="n">passages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">page_py</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Embedding-conversion">
+<a class="anchor" href="#Embedding-conversion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Embedding conversion<a class="anchor-link" href="#Embedding-conversion"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">corpus_embeddings</span> <span class="o">=</span> <span class="n">bi_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">passages</span><span class="p">,</span> <span class="n">convert_to_tensor</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Encode the query using the bi-encoder and find potentially relevant passages then score all retrieved passages with the cross_encoder and then sort the results.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Searching">
+<a class="anchor" href="#Searching" aria-hidden="true"><span class="octicon octicon-link"></span></a>Searching<a class="anchor-link" href="#Searching"> </a>
+</h1>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Input question:"</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+
+
+    <span class="n">question_embedding</span> <span class="o">=</span> <span class="n">bi_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">convert_to_tensor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">question_embedding</span> <span class="o">=</span> <span class="n">question_embedding</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">semantic_search</span><span class="p">(</span><span class="n">question_embedding</span><span class="p">,</span> <span class="n">corpus_embeddings</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">)</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">hits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  
+
+    <span class="n">cross_inp</span> <span class="o">=</span> <span class="p">[[</span><span class="n">query</span><span class="p">,</span> <span class="n">passages</span><span class="p">[</span><span class="n">hit</span><span class="p">[</span><span class="s1">'corpus_id'</span><span class="p">]]]</span> <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">]</span>
+    <span class="n">cross_scores</span> <span class="o">=</span> <span class="n">cross_encoder</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">cross_inp</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cross_scores</span><span class="p">)):</span>
+        <span class="n">hits</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s1">'cross-score'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cross_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">-------------------------</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Top-3 Bi-Encoder Retrieval hits"</span><span class="p">)</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hits</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">'score'</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="si">{:.3f}</span><span class="se">\t</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hit</span><span class="p">[</span><span class="s1">'score'</span><span class="p">],</span> <span class="n">passages</span><span class="p">[</span><span class="n">hit</span><span class="p">[</span><span class="s1">'corpus_id'</span><span class="p">]]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">-------------------------</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Top-3 Cross-Encoder Re-ranker hits"</span><span class="p">)</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hits</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">'cross-score'</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="si">{:.3f}</span><span class="se">\t</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hit</span><span class="p">[</span><span class="s1">'cross-score'</span><span class="p">],</span> <span class="n">passages</span><span class="p">[</span><span class="n">hit</span><span class="p">[</span><span class="s1">'corpus_id'</span><span class="p">]]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we ask question to find relevant answer sentence from the corpus.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">search</span><span class="p">(</span><span class="n">query</span> <span class="o">=</span> <span class="s2">"Who worships Krishna?"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input question: Who worships Krishna?
+
+-------------------------
+
+Top-3 Bi-Encoder Retrieval hits
+	0.710	 In some sub-traditions, Krishna is worshipped as Svayam Bhagavan (the Supreme God), and it is sometimes known as Krishnaism
+	0.674	Krishna (, pronounced [ˈkr̩ʂɳɐ] (listen); Sanskrit: कृष्ण, IAST: Kṛṣṇa)  is a major deity in Hinduism
+	0.610	 Since the 1960s, the worship of Krishna has also spread to the Western world and to Africa, largely due to the work of the International Society for Krishna Consciousness (ISKCON)
+
+-------------------------
+
+Top-3 Cross-Encoder Re-ranker hits
+	8.215	 In some sub-traditions, Krishna is worshipped as Svayam Bhagavan (the Supreme God), and it is sometimes known as Krishnaism
+	6.475	 Since the 1960s, the worship of Krishna has also spread to the Western world and to Africa, largely due to the work of the International Society for Krishna Consciousness (ISKCON)
+	5.061	Krishna (, pronounced [ˈkr̩ʂɳɐ] (listen); Sanskrit: कृष्ण, IAST: Kṛṣṇa)  is a major deity in Hinduism
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">search</span><span class="p">(</span><span class="n">query</span> <span class="o">=</span> <span class="s2">"Who is Shiva?"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input question: Who is Shiva?
+
+-------------------------
+
+Top-3 Bi-Encoder Retrieval hits
+	0.710	 Shiva is also known as Adiyogi Shiva, regarded as the patron god of yoga, meditation and the arts
+	0.707	 Shiva is a pan-Hindu deity, revered widely by Hindus in India, Nepal, Sri Lanka and Indonesia (especially in Java and Bali)
+	0.706	Shiva  (; Sanskrit: शिव, romanized: Śiva, lit
+
+-------------------------
+
+Top-3 Cross-Encoder Re-ranker hits
+	9.244	 Shiva is a pan-Hindu deity, revered widely by Hindus in India, Nepal, Sri Lanka and Indonesia (especially in Java and Bali)
+	8.796	 Shiva is also known as Adiyogi Shiva, regarded as the patron god of yoga, meditation and the arts
+	5.118	Shiva  (; Sanskrit: शिव, romanized: Śiva, lit
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">search</span><span class="p">(</span><span class="n">query</span> <span class="o">=</span> <span class="s2">"Who is the preserver?"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input question: Who is the preserver?
+
+-------------------------
+
+Top-3 Bi-Encoder Retrieval hits
+	0.329	Vishnu is known as "The Preserver" within the Trimurti, the triple deity of supreme divinity that includes Brahma and Shiva
+	0.292	  In Vaishnavism, Vishnu is the supreme being who creates, protects, and transforms the universe
+	0.253	 He is the god of protection, compassion, tenderness, and love; and is one of the most popular and widely revered among Indian divinities
+
+-------------------------
+
+Top-3 Cross-Encoder Re-ranker hits
+	6.345	Vishnu is known as "The Preserver" within the Trimurti, the triple deity of supreme divinity that includes Brahma and Shiva
+	-7.569	 He is the god of protection, compassion, tenderness, and love; and is one of the most popular and widely revered among Indian divinities
+	-9.610	  In Vaishnavism, Vishnu is the supreme being who creates, protects, and transforms the universe
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"486940e663934516918e9c4c447bca22": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_64be71b355c542668648a8d4e8c404c3", "IPY_MODEL_4b1c4a92bf414686a87aa587ac0ecc14", "IPY_MODEL_60fb22a7cb6b4ee7acc2448efbbbc9f5"], "layout": "IPY_MODEL_807f8ccab5b940559f282946fe916408"}}, "64be71b355c542668648a8d4e8c404c3": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_75362c6f5800481082c8df9c00d35879", "placeholder": "\u200b", "style": "IPY_MODEL_fc0ceb94e7a143f6a26b693b2c58c85d", "value": "Batches: 100%"}}, "4b1c4a92bf414686a87aa587ac0ecc14": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_b72918b5958447d4a14f8c99c2742ceb", "max": 2, "min": 0, "orientation": "horizontal", "style": "IPY_MODEL_1106f25b0dbe40d798fabe8818322b41", "value": 2}}, "60fb22a7cb6b4ee7acc2448efbbbc9f5": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_a51f86cc2ae74940bb75f5f164fa8b85", "placeholder": "\u200b", "style": "IPY_MODEL_c76f77c25c124fb38fb1a08c78cac8c7", "value": " 2/2 [00:00&lt;00:00, 20.09it/s]"}}, "807f8ccab5b940559f282946fe916408": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "75362c6f5800481082c8df9c00d35879": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "fc0ceb94e7a143f6a26b693b2c58c85d": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "b72918b5958447d4a14f8c99c2742ceb": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "1106f25b0dbe40d798fabe8818322b41": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "a51f86cc2ae74940bb75f5f164fa8b85": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "c76f77c25c124fb38fb1a08c78cac8c7": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}}
+</script>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ashish244co/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/deep%20learning/nlp/jupyter/2022/08/10/Question_Answer_From_Passage.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Project Portfolio</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

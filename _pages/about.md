@@ -4,7 +4,7 @@ title: About Me
 permalink: /about/
 ---
 
-## I am data professional who is well-versed in Data Science, Data Engineering, Machine/Deep Learning, and Data Analysis. My education background spans across Computer Science and Applied Data Science.
+## I am data professional who is well-versed in Data Science, Data Engineering, Machine/Deep Learning, and Data Analysis. I am more of a generalist than a specialist. My education background spans across Computer Science and Applied Data Science.
 
 ![]({{ site.baseurl }}/images/myself.jpg "my pic")
 
